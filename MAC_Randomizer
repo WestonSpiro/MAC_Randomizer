@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+#MAC address changer developed on Kali Linux for simliar distributions
+
+import subprocess
+import random
+import time
+from datetime import datetime
+
+
+#IANA OUI Unicast MAC address format
+#11,390,625 Possible MAC addresses
+
+print("Welcome To MAC Randomizer")
+print("Your MAC address will change every 60 seconds")
+
+interface = input("Please input interface to randomize: ")
+
+print("Press Ctrl & C to quit")
+
+t = time.localtime()
+current_time = time.strftime("%H:%M:%S", t)
+
+starttime = time.time()
+
+while True:
+    new_mac = "00:00:5e:%0x%0x:%0x%0x:%0x%0x" % (
+        random.randint(0, 15),
+        random.randint(0, 15),
+        random.randint(0, 15),
+        random.randint(0, 15),
+        random.randint(0, 15),
+        random.randint(0, 15)
+    )
+    print("[+] Changing MAC address for " + interface + " to " + new_mac)
+    subprocess.call("sudo ifconfig " + interface + " down ", shell=True)
+    subprocess.call("sudo ifconfig " + interface + " hw ether " + new_mac, shell=True)
+    subprocess.call("sudo ifconfig " + interface + " up ", shell=True)
+    print("[+] MAC address for " + interface + " changed to: " + new_mac + " at: " + time.ctime())
+    time.sleep(60.0 - ((time.time() - starttime) % 60.0))
